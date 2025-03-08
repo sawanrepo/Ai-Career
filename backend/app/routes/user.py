@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..services import create_user, get_user_by_email
@@ -7,12 +7,14 @@ router = APIRouter()
 
 @router.post("/register")
 def register_user(username: str, email: str, password: str, db: Session = Depends(get_db)):
-    # Hash password (add hashing later)
-    hashed_password = password  # Just for now, not secure!
+    if get_user_by_email(db, email):
+        raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Create user
-    return create_user(db, username, email, hashed_password)
+    return create_user(db, username, email, password)
 
-@router.get("/user/{email}")
+@router.get("/{email}")
 def get_user(email: str, db: Session = Depends(get_db)):
-    return get_user_by_email(db, email)
+    user = get_user_by_email(db, email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
