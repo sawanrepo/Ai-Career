@@ -6,7 +6,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/.env
+      - ./backend/.env  # ✅ Load backend .env
     volumes:
       - ./backend:/app
     depends_on:
@@ -18,8 +18,11 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env  # ✅ Load frontend .env
     depends_on:
-      - backend
+      backend:
+        condition: service_started  # ✅ Ensures backend starts before frontend
     volumes:
       - ./frontend:/app
     restart: always  
@@ -28,16 +31,14 @@ services:
     image: postgres:latest
     container_name: postgres_db
     restart: always
-    environment:
-      POSTGRES_USER: ai_career_user
-      POSTGRES_PASSWORD: yourpassword
-      POSTGRES_DB: ai_career_db
+    env_file:
+      - ./.env  # ✅ Load database credentials from root .env
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:  # ✅ Ensures database is ready before backend starts
-      test: ["CMD-SHELL", "pg_isready -U ai_career_user -d ai_career_db"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
       interval: 10s
       retries: 5
       timeout: 5s
