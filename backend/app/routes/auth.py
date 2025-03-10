@@ -7,6 +7,7 @@ from datetime import timedelta
 import os
 from dotenv import load_dotenv
 from jose import JWTError, jwt
+from ..models import User
 
 load_dotenv()
 security_key = os.getenv("SECRET_KEY")
@@ -49,3 +50,16 @@ def protected_route(token: str = Depends(oauth2_scheme), db: Session = Depends(g
 
     return {"message": "You are authorized!", "user": user.username}
 
+@router.get("/username/{username}")
+def check_username(username: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == username).first()
+    if user:
+        raise HTTPException(status_code=409, detail="Username taken")
+    return {"available": True}
+
+@router.get("/email/{email}")
+def check_email(email: str, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, email)
+    if user:
+        raise HTTPException(status_code=409, detail="Email already registered")
+    return {"available": True}

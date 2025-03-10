@@ -1,0 +1,28 @@
+.error {
+    color: red;
+    font-size: 0.8em;
+  }
+  
+  .register-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .password-input {
+    position: relative;
+  }
+  
+  .password-input input {
+    width: 100%;
+    padding-right: 30px;
+  }
+  
+  .toggle-eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
@@ -58,6 +58,11 @@ const Login = () => {
         /><br /><br />
         <button type="submit">Login</button>
       </form>
+      <p>
+        Don't have an account?{" "}
+        <Link to="/register">Register here</Link>
+      </p>
+
     </div>
   );
 };
