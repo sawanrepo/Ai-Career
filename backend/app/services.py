@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from app.models import User
+from app.models import User, UserProfile
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -45,6 +45,12 @@ def create_user(db: Session, username: str, email: str, password: str):
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    #creating a empty user profile for the user
+    profile = UserProfile(user_id=user.id)
+    db.add(profile)
+    db.commit()
+
     return user
 
 # Get user by email
