@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from app.models import User, UserProfile
 import os
+from fastapi.security import OAuth2PasswordBearer
+from .database import get_db
+from fastapi import Depends, HTTPException, status
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -59,3 +62,29 @@ def get_user_by_email(db: Session, email: str):
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
+
+#get current user
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    if not token:
+        raise HTTPException(status_code=401, detail="Token not provided")
+
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    user = get_user_by_email(db, email)
+    if user is None:
+        raise credentials_exception
+
+    return user

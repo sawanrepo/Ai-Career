@@ -23,3 +23,15 @@ class UserProfile(UserProfileBase):
 
     class Config:
         orm_mode = True
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    email: EmailStr
+    profile: Optional[UserProfile] = None
+
+    class Config:
+        orm_mode = True
+
+class UserProfileUpdate(UserProfileBase):
+    pass
