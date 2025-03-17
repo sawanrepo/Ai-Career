@@ -1,68 +1,82 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import "../styles/Login.css";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const API = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+  const togglePassword = () => setShowPassword((prev) => !prev);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      const formData = new URLSearchParams();
-      formData.append("username", email);
-      formData.append("password", password);
+      const body = new URLSearchParams();
+      body.append("username", formData.email); // must be 'username' for FastAPI
+      body.append("password", formData.password);
 
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      const res = await axios.post(`${API}/auth/login`, body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
 
-      if (response.status === 200) {
-        localStorage.setItem("token", response.data.access_token);
-        navigate("/dashboard");
-      }
+      localStorage.setItem("token", res.data.access_token);
+      navigate("/dashboard");
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setError("Invalid credentials. Please try again.");
+      setError("Invalid email or password");
     }
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Login</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        /><br /><br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        /><br /><br />
-        <button type="submit">Login</button>
-      </form>
-      <p>
-        Don't have an account?{" "}
-        <Link to="/register">Register here</Link>
-      </p>
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Welcome Back 👋</h2>
+        <p className="subtitle">Login to your account</p>
+        <form onSubmit={handleSubmit}>
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
 
+          <label>Password</label>
+          <div className="password-input">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+            />
+            <span className="toggle-eye" onClick={togglePassword}>
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
+
+          {error && <p className="error-text">{error}</p>}
+
+          <button type="submit">Login</button>
+        </form>
+
+        <p className="register-link">
+          Don't have an account?{" "}
+          <Link to="/register">Register here</Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -3,7 +3,7 @@ import axios from "axios";
 import debounce from "lodash.debounce";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import '../styles/Register.css';
+import "../styles/Register.css";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -25,35 +25,39 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  // Debounced username checker
-  // Check Email Availability
-const checkEmail = useMemo(() =>
-    debounce(async (email) => {
-      if (!email) return;
-      try {
-        await axios.get(`${API}/auth/email/${email}`);
-        setAvailability((prev) => ({ ...prev, email: true })); // ✅ Available
-      } catch (err) {
-        if (err.response?.status === 409) {
-          setAvailability((prev) => ({ ...prev, email: false })); // ❌ Taken
+  // Debounced Email Checker
+  const checkEmail = useMemo(
+    () =>
+      debounce(async (email) => {
+        if (!email) return;
+        try {
+          await axios.get(`${API}/auth/email/${email}`);
+          setAvailability((prev) => ({ ...prev, email: true }));
+        } catch (err) {
+          if (err.response?.status === 409) {
+            setAvailability((prev) => ({ ...prev, email: false }));
+          }
         }
-      }
-    }, 500), [API]);
-  
-  // Check Username Availability
-  const checkUsername = useMemo(() =>
-    debounce(async (username) => {
-      if (!username) return;
-      try {
-        await axios.get(`${API}/auth/username/${username}`);
-        setAvailability((prev) => ({ ...prev, username: true })); // ✅ Available
-      } catch (err) {
-        if (err.response?.status === 409) {
-          setAvailability((prev) => ({ ...prev, username: false })); // ❌ Taken
+      }, 500),
+    [API]
+  );
+
+  // Debounced Username Checker
+  const checkUsername = useMemo(
+    () =>
+      debounce(async (username) => {
+        if (!username) return;
+        try {
+          await axios.get(`${API}/auth/username/${username}`);
+          setAvailability((prev) => ({ ...prev, username: true }));
+        } catch (err) {
+          if (err.response?.status === 409) {
+            setAvailability((prev) => ({ ...prev, username: false }));
+          }
         }
-      }
-    }, 500), [API]);
-  
+      }, 500),
+    [API]
+  );
 
   // Trigger availability checks
   useEffect(() => {
@@ -66,7 +70,7 @@ const checkEmail = useMemo(() =>
     };
   }, [formData.username, formData.email, checkUsername, checkEmail]);
 
-  // Form validation
+  // Validation
   const validate = () => {
     const err = {};
 
@@ -87,30 +91,43 @@ const checkEmail = useMemo(() =>
       err.confirmPassword = "Passwords do not match";
 
     if (availability.email === false) err.email = "Email already registered";
-    if (availability.username === false) err.username = "Username already taken";
+    if (availability.username === false)
+      err.username = "Username already taken";
 
     setErrors(err);
     return Object.keys(err).length === 0;
   };
 
-  // Form submission
+  // Handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
     try {
-      await axios.post(`${API}/user/register`, {
-        username: formData.username,
+      // 1. Register
+      await axios.post(
+        `${API}/user/register`,
+        {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      // 2. Login immediately
+      const res = await axios.post(`${API}/user/login`, {
         email: formData.email,
         password: formData.password,
-      }, {
-        headers: { "Content-Type": "application/json" },
       });
 
-      alert("Registration successful!");
+      // 3. Store token and redirect
+      localStorage.setItem("token", res.data.access_token);
       navigate("/dashboard");
     } catch (err) {
-      alert(err.response?.data?.detail || "Registration failed");
+      alert(err.response?.data?.detail || "Registration/Login failed");
     }
   };
 
@@ -123,7 +140,9 @@ const checkEmail = useMemo(() =>
         <input
           type="text"
           value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, username: e.target.value })
+          }
         />
         {availability.username === false && (
           <p className="error">Username already taken</p>
@@ -135,7 +154,9 @@ const checkEmail = useMemo(() =>
         <input
           type="email"
           value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, email: e.target.value })
+          }
         />
         {availability.email === false && (
           <p className="error">Email already registered</p>
@@ -176,7 +197,10 @@ const checkEmail = useMemo(() =>
 
       <p style={{ marginTop: "10px" }}>
         Already have an account?{" "}
-        <Link to="/login" style={{ color: "blue", textDecoration: "underline" }}>
+        <Link
+          to="/login"
+          style={{ color: "blue", textDecoration: "underline" }}
+        >
           Login here
         </Link>
       </p>

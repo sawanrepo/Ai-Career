@@ -1,0 +1,36 @@
+.dashboard-container {
+    text-align: center;
+    margin-top: 80px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .dashboard-heading {
+    margin-bottom: 30px;
+  }
+  
+  .dashboard-links {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .dashboard-link {
+    font-size: 18px;
+    color: #0077cc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .logout-button {
+    padding: 12px 25px;
+    background-color: #e63946;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
