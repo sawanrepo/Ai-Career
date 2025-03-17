@@ -1,21 +1,31 @@
-# AI Career Project
+# 🧠 AI Career Project
 
-## Project Overview
-AI Career Project is an AI-powered career guidance chatbot that provides career recommendations, personalized learning paths, and resume analysis with mock interviews. It integrates AI-driven NPCs for mentorship, training, and recruitment.
+AI Career Project is an AI-powered career guidance platform that uses intelligent NPC mentors to assist users with:
+
+- ✅ Career recommendations
+- 📚 Personalized learning paths
+- 📄 Resume analysis
+- 🎤 Mock interviews
+- 👩‍🏫 AI-driven mentorship via NPC chat (Tatva)
+
+It includes both a FastAPI backend and a React frontend, designed to work together seamlessly.
 
 ---
 
-## Setup Instructions
+## 🚀 Getting Started
 
-### 1. Clone the Repository
-```sh
+### 1. 📦 Clone the Repository
+```bash
 git clone https://github.com/your-repo/AI-Career-Project.git
 cd AI-Career-Project
 ```
 
-### 2. Backend Setup
-#### Install Dependencies
-```sh
+---
+
+## 🛠 Backend Setup (FastAPI)
+
+### Step 1: Install Python dependencies
+```bash
 cd backend
 python -m venv venv  # Create virtual environment
 source venv/bin/activate  # On macOS/Linux
@@ -23,48 +33,76 @@ venv\Scripts\activate  # On Windows
 pip install -r requirements.txt
 ```
 
-#### Configure Environment Variables
-- Copy the `.env.template` file to `.env` and update it with the correct values.
-```sh
-cp .env.template .env
+### Step 2: Set up environment variables
+```bash
+cp .env.template .env  # Then edit .env with your keys and DB URL
 ```
 
-#### Run the Backend Server
-```sh
+### Step 3: Run the backend server
+```bash
 uvicorn app.main:app --reload
 ```
 
-### 3. Frontend Setup
-#### Install Dependencies
-```sh
+> API available at: `http://localhost:8000`
+
+---
+
+## 🌐 Frontend Setup (React)
+
+### Step 1: Install dependencies
+```bash
 cd frontend
 npm install
 ```
 
-#### Configure Environment Variables
-- Copy the `.env.template` file to `.env` and update it with the correct values.
-```sh
-cp .env.template .env
+### Step 2: Set up environment variables
+```bash
+cp .env.template .env  # Then edit .env with VITE_BACKEND_URL or REACT_APP_API_URL
 ```
 
-#### Run the Frontend Server
-```sh
+### Step 3: Run the frontend
+```bash
 npm start
 ```
 
-### 4. Docker Setup (Optional)
-To run the project using Docker:
-```sh
+> Frontend available at: `http://localhost:3000`
+
+---
+
+## 🐳 Docker Setup (Optional)
+
+If you prefer using Docker:
+```bash
 docker-compose up --build
 ```
 
+Make sure both frontend and backend `.env` files are properly set.
 
+---
 
-**Note:** Since `.env` is ignored in `.gitignore`, use `.env.template` as a reference to create your `.env` file.
+## 🤝 Contribution Guidelines
 
-### 5. Contribution Guidelines
-Fork the repository.
-Create a feature branch (git checkout -b feature-name).
-Commit changes (git commit -m "Added feature").
-Push to your branch (git push origin feature-name). Dont push directly to main.
-Open a pull request.
+1. Fork the repository
+2. Create a feature branch
+```bash
+git checkout -b feature-name
+```
+3. Commit your changes
+```bash
+git commit -m "Added feature"
+```
+4. Push to your branch
+```bash
+git push origin feature-name
+```
+5. Create a pull request
+
+🔒 **Avoid pushing directly to `main` branch.**
+
+---
+## 📬 Feedback
+We'd love to hear your feedback! Create issues or feature requests anytime.
+
+---
+
+> Built with 💙 by Team AetherAI for career empowerment.

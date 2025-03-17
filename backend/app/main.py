@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import user, auth, profile
+from app.routes import user, auth, profile, chat
 
 app = FastAPI()
 
@@ -24,3 +24,6 @@ app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 
 # include profile 
 app.include_router(profile.router)
+
+# Include chat(mentor)
+app.include_router(chat.router)

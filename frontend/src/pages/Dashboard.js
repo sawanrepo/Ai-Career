@@ -8,6 +8,9 @@ const Dashboard = () => {
       <p>
         <Link to="/profile">View Profile.</Link>
       </p>
+      <p>
+        <Link to="/mentor">Chat with Mentor.</Link>
+      </p>
     </div>
   );
 };

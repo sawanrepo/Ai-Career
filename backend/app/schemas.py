@@ -31,7 +31,18 @@ class UserOut(BaseModel):
     profile: Optional[UserProfile] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserProfileUpdate(UserProfileBase):
     pass
+
+class ChatRequest(BaseModel):
+    message: str
+
+class ChatResponse(BaseModel):
+    sender: str
+    message: str
+    timestamp: datetime
+
+class ChatHistoryResponse(BaseModel):
+    history: List[ChatResponse]

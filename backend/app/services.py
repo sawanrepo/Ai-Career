@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from app.models import User, UserProfile
+from app.models import User, UserProfile, ChatMessage
 import os
 from fastapi.security import OAuth2PasswordBearer
 from .database import get_db
@@ -88,3 +88,26 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
 
     return user
+
+def save_chat_message(db: Session, user_id: int, sender: str, message: str):
+    new_msg = ChatMessage(user_id=user_id, sender=sender, message=message)
+    db.add(new_msg)
+    db.commit()
+
+    # Limited history upto 40 message. Delete old messages if message > 40.
+    messages = db.query(ChatMessage).filter_by(user_id=user_id).order_by(ChatMessage.timestamp.asc()).all()
+    if len(messages) > 40:
+        for msg in messages[:len(messages) - 40]:
+            db.delete(msg)
+        db.commit()
+
+
+def get_chat_history(db: Session, user_id: int):
+    return db.query(ChatMessage).filter_by(user_id=user_id).order_by(ChatMessage.timestamp.asc()).all()
+
+def reset_chat_history(db: Session, user_id: int):
+    db.query(ChatMessage).filter_by(user_id=user_id).delete()
+    db.commit()
+
+def get_user_profile(db: Session, user_id: int):
+    return db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
