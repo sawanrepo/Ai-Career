@@ -116,12 +116,16 @@ const Register = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-
+      
       // 2. Login immediately
-      const res = await axios.post(`${API}/user/login`, {
-        email: formData.email,
-        password: formData.password,
+      const body = new URLSearchParams();
+      body.append("username", formData.email);
+      body.append("password", formData.password);
+      
+      const res = await axios.post(`${API}/auth/login`, body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
+      
 
       // 3. Store token and redirect
       localStorage.setItem("token", res.data.access_token);

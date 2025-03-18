@@ -1,115 +1,101 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../styles/ChatWithMentor.css';
 
-function ChatWithMentor() {
-  const [messages, setMessages] = useState([]);
+const ChatWithMentor = () => {
   const [input, setInput] = useState('');
-  const [typing, setTyping] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const chatBoxRef = useRef(null);
-
-  const API_URL = process.env.REACT_APP_API_URL;
-
-  const fetchMessages = useCallback(async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`${API_URL}/tatva-chat-history`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (Array.isArray(res.data.history)) {
-        const normalized = res.data.history.map((m) => ({
-          role: m.sender === 'tatva' ? 'npc' : 'user',
-          content: m.message,
-          timestamp: new Date(m.timestamp).toLocaleString(),
-        }));
-        setMessages(normalized);
-      } else {
-        console.error("Unexpected API response:", res.data);
-        setMessages([]);
-      }
-    } catch (err) {
-      console.error("Error fetching chat history:", err);
-      setMessages([]);
-    }
-  }, [API_URL]);
-
-  useEffect(() => {
-    fetchMessages();
-  }, [fetchMessages]);
-
-  useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  }, [messages, typing]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const userMsg = {
-      role: 'user',
-      content: input,
-      timestamp: new Date().toLocaleString(),
-    };
-
-    setMessages((prev) => [...prev, userMsg]);
+    const userMessage = { sender: 'user', text: input };
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
-    setTyping(true);
+    setIsLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post(
-        `${API_URL}/tatva-chat`,
-        { message: input },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await axios.post('http://localhost:8000/chat', {
+        message: input,
+      });
 
-      const npcMsg = {
-        role: 'npc',
-        content: res.data.message,
-        timestamp: new Date().toLocaleString(),
-      };
-
-      setTimeout(() => {
-        setMessages((prev) => [...prev, npcMsg]);
-        setTyping(false);
-      }, 1000);
-    } catch (err) {
-      console.error("Error sending message:", err);
-      setTyping(false);
+      const botMessage = { sender: 'mentor', text: response.data.response };
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage = { sender: 'mentor', text: 'Something went wrong. Please try again later.' };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleReset = () => {
+    setMessages([]);
+    setInput('');
+  };
+
+  useEffect(() => {
+    chatBoxRef.current?.scrollTo({
+      top: chatBoxRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [messages]);
+
   return (
     <div className="chat-container">
+      <div className="chat-header">
+        <h2>Chat with Mentor Tatva</h2>
+        <button className="reset-btn" onClick={handleReset}>Reset</button>
+      </div>
+
       <div className="chat-box" ref={chatBoxRef}>
-        {Array.isArray(messages) &&
-          messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.role === 'user' ? 'user' : 'npc'}`}>
-              <div className="message-content">{msg.content}</div>
-              <div className="timestamp">{msg.timestamp}</div>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`message-row ${msg.sender === 'user' ? 'user' : 'mentor'}`}
+          >
+            <div className="avatar">{msg.sender === 'user' ? '🧑‍💻' : '🧙‍♂️'}</div>
+            <div className="bubble">
+              <div className="message-content">{msg.text}</div>
             </div>
-          ))}
-        {typing && (
-          <div className="message npc">
-            <span className="dot-flashing"></span>
-            Tatva is typing...
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="message-row mentor">
+            <div className="avatar">🧙‍♂️</div>
+            <div className="bubble">
+              <div className="dot-flashing"></div>
+            </div>
           </div>
         )}
       </div>
+
       <div className="input-section">
-        <input
-          type="text"
-          placeholder="Ask Tatva anything..."
+        <textarea
+          className="message-input"
+          placeholder="Ask your mentor something..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={handleKeyDown}
+          rows="3"
         />
-        <button onClick={handleSend}>Send</button>
+        <button className="send-button" onClick={handleSend} disabled={isLoading || !input.trim()}>
+          Send
+        </button>
       </div>
     </div>
   );
-}
+};
 
 export default ChatWithMentor;
