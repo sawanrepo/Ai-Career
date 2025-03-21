@@ -14,6 +14,7 @@ class User(Base):
 
     profile = relationship("UserProfile", back_populates="user",uselist=False)
     messages = relationship("ChatMessage", back_populates="user", cascade="all, delete")
+    drishti_messages = relationship("DrishtiMessage", back_populates="user", cascade="all, delete")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
@@ -38,3 +39,15 @@ class ChatMessage(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="messages")
+
+#new table for counselor messages . later will be murged with chat messages with new coloumn chat_type(tatva/Drishti).
+class DrishtiMessage(Base):
+    __tablename__ = "drishti_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    sender = Column(String)
+    message = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="drishti_messages")

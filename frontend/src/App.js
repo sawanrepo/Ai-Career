@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Register from './pages/Register';
 import Profile from "./pages/Profile";
 import ChatWithMentor from "./pages/ChatWithMentor";
+import ChatWithCounselor from "./pages/ChatWithCounselor";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/mentor" element={<ChatWithMentor />} />
+        <Route path="/counselor" element={<ChatWithCounselor />} />
       </Routes>
     </Router>
   );

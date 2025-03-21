@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import ChatRequest, ChatHistoryResponse, ChatResponse
+from app.schemas import ChatRequest, ChatHistoryResponse, ChatResponse, DrishtiChatResponse, DrishtiChatHistoryResponse
 from app.services import (
     save_chat_message,
     get_chat_history,
     reset_chat_history,
     get_current_user,
-    get_user_profile
+    get_user_profile,
+    save_drishti_message,
+    get_drishti_history,
+    reset_drishti_history,
 )
 from app.models import User
 from datetime import datetime
@@ -126,3 +129,102 @@ def reset_chat(
         memory_dict[current_user.id].clear()
         del memory_dict[current_user.id]
     return {"message": "Chat history reset successfully."}
+
+#dristhi logics 
+drishti_memory_dict = {}
+@router.post("/drishti-chat", response_model=DrishtiChatResponse)
+def chat_with_drishti(
+    req: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    user_id = current_user.id
+    profile = get_user_profile(db, user_id)
+    username = current_user.username
+    if not profile:
+        raise HTTPException(status_code=404, detail="User profile not found")
+
+    context = get_user_context(profile)
+
+    drishti_prompt = f"""You are Drishti, a warm and empathetic AI counselor who helps students navigate emotional stress, academic pressure, and mental wellness.
+    The user has this Profile : -
+username: {username}
+{context}
+
+Your job is to listen, understand, and offer comforting, constructive advice based on what the user shares. You are not a certified therapist, but you are a caring and attentive listener.
+
+Respond in this style:
+- Start with a gentle greeting using the user's name (e.g., "Hi {username}, I'm here for you. 💙").
+- Acknowledge the user’s feelings and reassure them.
+- Use a calm, supportive tone and avoid robotic or overly formal language.
+- Keep your messages short, kind, and thoughtful.
+- Avoid giving medical advice or diagnosing anything.
+- Offer gentle suggestions like journaling, breathing exercises, or reaching out to a friend.
+- If the user expresses strong negative emotions (e.g., hopelessness, panic), gently encourage them to talk to someone they trust or a professional counselor.
+- Add comforting emojis like 💙🙂🌿 when appropriate.
+- If the user seems unsure, ask caring follow-up questions to learn more about how they're feeling.
+
+Instructions:
+- Never dismiss or minimize the user's emotions.
+- If they ask about careers or goals, politely guide them to chat with Tatva instead.
+- Use user profile details to offer personalized advice when possible.
+- Always be empathetic, patient, and encouraging.
+- Help them feel safe and understood.
+- Help then come out of acedmic stress , family pressure , mental wellness etc.
+- Provide resources for mental health support if needed.
+Chat history:
+{{history}}
+
+User: {{input}}
+Drishti:"""
+    system_prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        template=drishti_prompt
+    )
+
+    if user_id not in drishti_memory_dict:
+        drishti_memory_dict[user_id] = ConversationBufferMemory(
+            return_messages=True,
+            memory_key="history",
+            max_token_limit=1000
+        )
+
+    llm = LLM.get_llm(temperature=0.4)
+
+    chain = ConversationChain(
+        llm=llm,
+        memory=drishti_memory_dict[user_id],
+        prompt=system_prompt
+    )
+
+    ai_response = chain.predict(input=req.message)
+
+    save_drishti_message(db, user_id, "user", req.message)
+    save_drishti_message(db, user_id, "drishti", ai_response)
+
+    return DrishtiChatResponse(sender="drishti", message=ai_response, timestamp=datetime.utcnow())
+
+
+@router.get("/drishti-chat-history", response_model=DrishtiChatHistoryResponse)
+def get_drishti_history_route(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    messages = get_drishti_history(db, current_user.id)
+    formatted = [
+        DrishtiChatResponse(sender=m.sender, message=m.message, timestamp=m.timestamp)
+        for m in messages
+    ]
+    return DrishtiChatHistoryResponse(history=formatted)
+
+
+@router.post("/drishti-chat-reset")
+def reset_drishti_chat_route(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    reset_drishti_history(db, current_user.id)
+    if current_user.id in drishti_memory_dict:
+        drishti_memory_dict[current_user.id].clear()
+        del drishti_memory_dict[current_user.id]
+    return {"message": "Drishti chat history reset successfully."}

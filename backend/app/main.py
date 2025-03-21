@@ -25,5 +25,5 @@ app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 # include profile 
 app.include_router(profile.router)
 
-# Include chat(mentor)
+# Include chat(mentor,counselor)
 app.include_router(chat.router)

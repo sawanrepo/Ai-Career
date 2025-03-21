@@ -46,3 +46,12 @@ class ChatResponse(BaseModel):
 
 class ChatHistoryResponse(BaseModel):
     history: List[ChatResponse]
+
+#using duplicate (for tatva and drishti) for now. will be updated later.
+class DrishtiChatResponse(BaseModel):
+    sender: str
+    message: str
+    timestamp: datetime
+
+class DrishtiChatHistoryResponse(BaseModel):
+    history: List[DrishtiChatResponse]

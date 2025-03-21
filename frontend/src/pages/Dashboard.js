@@ -20,6 +20,9 @@ const Dashboard = () => {
         <Link to="/mentor" className="dashboard-link">
           Chat with Mentor
         </Link>
+        <Link to="/counselor" className="dashboard-link">
+          Chat with Counselor
+        </Link>
       </div>
 
       <button onClick={handleLogout} className="logout-button">
