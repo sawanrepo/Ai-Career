@@ -22,7 +22,7 @@ class UserProfile(UserProfileBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserOut(BaseModel):
     id: int
@@ -55,3 +55,35 @@ class DrishtiChatResponse(BaseModel):
 
 class DrishtiChatHistoryResponse(BaseModel):
     history: List[DrishtiChatResponse]
+
+class LearningResource(BaseModel):
+    title: str
+    type: str
+    url: str
+class LearningStep(BaseModel):
+    title: str
+    description: Optional[str] = None
+    resources: Optional[List[LearningResource]] = None
+
+class LearningPathCreate(BaseModel):
+    career_path: str
+    steps: Optional[List[LearningStep]] = None
+
+class LearningPathUpdate(BaseModel):
+    current_step: Optional[int] = None
+    is_completed: Optional[bool] = None
+    is_archived: Optional[bool] = None
+
+class LearningPathOut(BaseModel):
+    id: int
+    career_path: str
+    current_step: int
+    total_steps: int
+    steps: List[LearningStep]
+    is_completed: bool
+    is_archived: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True

@@ -1,0 +1,17 @@
+.card {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #fdfdfd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  }
+  
+  .step {
+    margin-bottom: 12px;
+  }
+  
+  .resources {
+    margin-left: 20px;
+    list-style-type: disc;
+  }  

@@ -1,0 +1,17 @@
+.learning-page {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px 20px;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }

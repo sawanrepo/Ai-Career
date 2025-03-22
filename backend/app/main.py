@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import user, auth, profile, chat
+from app.routes import user, auth, profile, chat, learning_path
 
 app = FastAPI()
 
@@ -27,3 +27,6 @@ app.include_router(profile.router)
 
 # Include chat(mentor,counselor)
 app.include_router(chat.router)
+
+# Include learning path routes
+app.include_router(learning_path.router, prefix="/learning-path", tags=["Learning Paths"])  

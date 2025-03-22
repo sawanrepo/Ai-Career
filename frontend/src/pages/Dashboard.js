@@ -23,6 +23,9 @@ const Dashboard = () => {
         <Link to="/counselor" className="dashboard-link">
           Chat with Counselor
         </Link>
+        <Link to="/learning-path">
+          <button className="your-progress-btn">📈 Your Progress</button>
+        </Link>
       </div>
 
       <button onClick={handleLogout} className="logout-button">

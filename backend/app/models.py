@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func, Boolean
+from sqlalchemy.dialects.postgresql import JSON
 from .database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -15,6 +16,7 @@ class User(Base):
     profile = relationship("UserProfile", back_populates="user",uselist=False)
     messages = relationship("ChatMessage", back_populates="user", cascade="all, delete")
     drishti_messages = relationship("DrishtiMessage", back_populates="user", cascade="all, delete")
+    learning_paths = relationship("LearningPath", back_populates="user", cascade="all, delete")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
@@ -51,3 +53,19 @@ class DrishtiMessage(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="drishti_messages")
+
+class LearningPath(Base):
+    __tablename__ = "learning_paths"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"),nullable=False)
+    career_path = Column(String,nullable=False)
+    current_step = Column(Integer,default=0)
+    total_steps = Column(Integer,default=0)
+    steps = Column(JSON)
+    is_completed = Column(Boolean,default=False)
+    is_archived = Column(Boolean,default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User", back_populates="learning_paths")
