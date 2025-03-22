@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/ChatWithMentor.css'; //using same design as tatva.
 const API_URL = process.env.REACT_APP_API_URL;
@@ -88,6 +89,9 @@ const ChatWithCounselor = () => {
     <div className="chat-container">
       <div className="chat-header">
         <h2>Chat with Counselor Drishti.</h2>
+        <Link to="/Dashboard">
+          <button className="back-btn">⬅ Back</button>
+        </Link>
         <button className="reset-btn" onClick={handleReset}>Reset chat</button>
       </div>
 

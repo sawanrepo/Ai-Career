@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ProfilePage.css';
+import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -107,7 +108,11 @@ const ProfilePage = () => {
           <button type="button" className="profile-cancel-button" onClick={() => setEditing(false)}>Cancel</button>
         </form>
       )}
-
+      <div className="back-button-container">
+        <Link to="/dashboard">
+          <button className="back-btn">🔙 Back to Dashboard 🚀</button>
+        </Link>
+      </div>
     </div>
   );
 };

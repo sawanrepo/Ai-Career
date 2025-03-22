@@ -3,6 +3,7 @@ import { getActivePaths } from "../services/learningPathAPI";
 import LearningPathCard from "../components/LearningPathCard";
 import LearningPathForm from "../components/LearningPathForm";
 import "../styles/LearningPathPage.css";
+import { Link } from "react-router-dom";
 
 export default function LearningPathPage() {
   const [paths, setPaths] = useState([]);
@@ -28,6 +29,11 @@ export default function LearningPathPage() {
         {paths.map((path) => (
           <LearningPathCard key={path.id} path={path} />
         ))}
+      </div>
+      <div className="back-button-container">
+        <Link to="/dashboard">
+          <button className="back-btn">🔙 Back to Dashboard 🚀</button>
+        </Link>
       </div>
     </div>
   );

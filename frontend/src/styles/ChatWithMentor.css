@@ -149,3 +149,24 @@
   .reset-btn:hover {
     background-color: #c62828;
   }
+
+  .back-btn {
+    background-color: #757575;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .back-btn:hover {
+    background-color: #616161;
+  }
+
+  .chat-actions {
+    display: flex;
+    gap: 10px;
+  }  

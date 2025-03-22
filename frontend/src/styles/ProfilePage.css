@@ -46,3 +46,21 @@
     margin-bottom: 0.25rem;
   }
   
+  .back-button-container {
+    margin-top: auto; 
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .back-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .back-btn:hover {
+    background-color: #0056b3;
+  }
