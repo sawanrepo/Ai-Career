@@ -87,3 +87,11 @@ class LearningPathOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class AryaChatResponse(BaseModel):
+    sender: str
+    message: str
+    timestamp: datetime
+
+class AryaChatHistoryResponse(BaseModel):
+    history: List[DrishtiChatResponse]

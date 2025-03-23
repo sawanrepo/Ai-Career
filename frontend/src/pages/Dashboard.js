@@ -26,6 +26,9 @@ const Dashboard = () => {
         <Link to="/learning-path">
           <button className="your-progress-btn">📈 Your Progress</button>
         </Link>
+        <Link to="/interviewer" className="dashboard-link">
+          Mock Interview
+        </Link>
       </div>
 
       <button onClick={handleLogout} className="logout-button">

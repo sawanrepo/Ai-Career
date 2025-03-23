@@ -17,6 +17,7 @@ class User(Base):
     messages = relationship("ChatMessage", back_populates="user", cascade="all, delete")
     drishti_messages = relationship("DrishtiMessage", back_populates="user", cascade="all, delete")
     learning_paths = relationship("LearningPath", back_populates="user", cascade="all, delete")
+    arya_messages = relationship("AryaMessage", back_populates="user", cascade="all, delete")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
@@ -69,3 +70,14 @@ class LearningPath(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     user = relationship("User", back_populates="learning_paths")
+
+class AryaMessage(Base):
+    __tablename__ = "arya_message"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    sender = Column(String)
+    message = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="arya_messages")

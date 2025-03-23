@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas import ChatRequest, ChatHistoryResponse, ChatResponse, DrishtiChatResponse, DrishtiChatHistoryResponse
+from app.schemas import ChatRequest, ChatHistoryResponse, ChatResponse, DrishtiChatResponse, DrishtiChatHistoryResponse, AryaChatResponse, AryaChatHistoryResponse
 from app.services import (
     save_chat_message,
     get_chat_history,
@@ -11,6 +11,9 @@ from app.services import (
     save_drishti_message,
     get_drishti_history,
     reset_drishti_history,
+    save_arya_message,
+    get_arya_history,
+    reset_arya_history
 )
 from app.models import User
 from datetime import datetime
@@ -37,6 +40,12 @@ Interests: {', '.join(profile.interests) if profile.interests else "Not provided
 Education: {profile.education or "Not provided"}
 Goals: {profile.goals or "Not provided"} 
 """
+
+def get_user_career_path(learning_paths: list) -> str:
+    if not learning_paths:
+        return "Career Path: None"
+    career_names = [lp.career_path for lp in learning_paths]
+    return f"Career Paths: {', '.join(career_names)}"
 
 @router.post("/tatva-chat", response_model=ChatResponse)
 def chat_with_tatva(
@@ -228,3 +237,104 @@ def reset_drishti_chat_route(
         drishti_memory_dict[current_user.id].clear()
         del drishti_memory_dict[current_user.id]
     return {"message": "Drishti chat history reset successfully."}
+
+arya_memory_dict = {}
+@router.post("/arya-chat", response_model=AryaChatResponse)
+def chat_with_arya(
+    req: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    user_id = current_user.id
+    profile = get_user_profile(db, user_id)
+    username = current_user.username
+    if not profile:
+        raise HTTPException(status_code=404, detail="User profile not found")
+
+    context = get_user_context(profile)
+    career_path = get_user_career_path(current_user.learning_paths)
+
+    arya_prompt = f"""You are Arya, an intelligent, no-nonsense AI interviewer trained to conduct mock interviews for students preparing for placements or higher studies.
+
+The user has this Profile: -
+username: {username}
+{context}
+{career_path}
+
+Your job is to:
+- Conduct a mock interview based on the user's profile
+- Ask one question at a time
+- Wait for the user's answer
+- Then provide constructive, short feedback (e.g., "Good approach, but try to explain with an example.")
+- Avoid being overly friendly — stay professional
+
+Response Style:
+- Start by greeting the user professionally: "Hello {username}, let's begin your mock interview. 👨‍💼"
+- Ask only **one question at a time**
+- Keep your tone firm but polite
+- Switch between behavioral, technical, and situational questions
+- Do **not** give answers directly unless the user requests feedback
+- End each response with "Your turn."
+- If user asks off-topic questions, redirect them
+
+Instructions:
+- Use user’s career_path/skills to tailor questions (e.g., if they know Python, ask Python-based questions, if there career path is Data Science, ask questions related to Data Science)
+- If career_path is not provided, ask him to tell career path and update in dashboard -> learning path section to get best results.
+- Don't be too chatty — simulate real interviewer behavior
+- Mention "click on reset chat button to  restart the interview."
+Chat history:
+{{history}}
+User: {{input}}
+Drishti:
+"""
+    system_prompt = PromptTemplate(
+        input_variables=["history", "input"],
+        template=arya_prompt
+    )
+
+    if user_id not in arya_memory_dict:
+        arya_memory_dict[user_id] = ConversationBufferMemory(
+            return_messages=True,
+            memory_key="history",
+            max_token_limit=1000
+        )   
+
+    llm = LLM.get_llm(temperature=0.3)
+
+    chain = ConversationChain(
+        llm=llm,
+        memory=arya_memory_dict[user_id],
+        prompt=system_prompt
+    )
+
+    ai_response = chain.predict(input=req.message)
+
+    save_arya_message(db, user_id, "user", req.message)
+    save_arya_message(db, user_id, "arya", ai_response)
+
+    return AryaChatResponse(sender="arya", message=ai_response, timestamp=datetime.utcnow())
+
+
+@router.get("/arya-chat-history", response_model=AryaChatHistoryResponse)
+def get_arya_history_route(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    messages = get_arya_history(db, current_user.id)
+    formatted = [
+        AryaChatResponse(sender=m.sender, message=m.message, timestamp=m.timestamp)
+        for m in messages
+    ]
+    return AryaChatHistoryResponse(history=formatted)
+
+
+@router.post("/arya-chat-reset")
+def reset_arya_chat_route(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    reset_arya_history(db, current_user.id)
+    if current_user.id in arya_memory_dict:
+        arya_memory_dict[current_user.id].clear()
+        del arya_memory_dict[current_user.id]
+    return {"message": "Arya chat history reset successfully."}

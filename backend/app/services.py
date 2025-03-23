@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from app.models import User, UserProfile, ChatMessage, DrishtiMessage
+from app.models import User, UserProfile, ChatMessage, DrishtiMessage, AryaMessage
 import os
 from fastapi.security import OAuth2PasswordBearer
 from .database import get_db
@@ -126,4 +126,22 @@ def get_drishti_history(db: Session, user_id: int):
 
 def reset_drishti_history(db: Session, user_id: int):
     db.query(DrishtiMessage).filter_by(user_id=user_id).delete()
+    db.commit()
+
+#arya logic
+def save_arya_message(db: Session, user_id: int, sender: str, message: str):
+    new_msg = AryaMessage(user_id=user_id, sender=sender, message=message)
+    db.add(new_msg)
+    db.commit()
+    messages = db.query(AryaMessage).filter_by(user_id=user_id).order_by(AryaMessage.timestamp.asc()).all()
+    if len(messages) > 40:
+        for msg in messages[:len(messages) - 40]:
+            db.delete(msg)
+        db.commit()
+
+def get_arya_history(db: Session, user_id: int):
+    return db.query(AryaMessage).filter_by(user_id=user_id).order_by(AryaMessage.timestamp.asc()).all()
+
+def reset_arya_history(db: Session, user_id: int):
+    db.query(AryaMessage).filter_by(user_id=user_id).delete()
     db.commit()

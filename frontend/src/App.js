@@ -8,7 +8,7 @@ import ChatWithMentor from "./pages/ChatWithMentor";
 import ChatWithCounselor from "./pages/ChatWithCounselor";
 import RequireAuth from "./utils/RequireAuth";
 import LearningPathPage from "./pages/LearningPathPage";
-
+import ChatWithInterviewer from "./pages/ChatwithInterviewer";
 function App() {
   return (
     <Router>
@@ -23,6 +23,7 @@ function App() {
         <Route path="/mentor" element={<RequireAuth><ChatWithMentor /></RequireAuth>} />
         <Route path="/counselor" element={<RequireAuth><ChatWithCounselor /></RequireAuth>} />
         <Route path="/learning-path" element={<RequireAuth><LearningPathPage /></RequireAuth>} />
+        <Route path="/interviewer" element={<RequireAuth><ChatWithInterviewer /></RequireAuth>} />
       </Routes>
     </Router>
   );
