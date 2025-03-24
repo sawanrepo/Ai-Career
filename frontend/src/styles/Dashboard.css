@@ -1,36 +1,96 @@
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* handles mobile wrapping */
+  padding: 20px;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  flex: 1;
+  min-width: 250px;
+}
+
+.dashboard-controls {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+body.dark-mode {
+  background-color: #121212;
+  color: white;
+}
+
 .dashboard-container {
-    text-align: center;
-    margin-top: 80px;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  
-  .dashboard-heading {
-    margin-bottom: 30px;
-  }
-  
-  .dashboard-links {
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-  }
-  
-  .dashboard-link {
-    font-size: 18px;
-    color: #0077cc;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .logout-button {
-    padding: 12px 25px;
-    background-color: #e63946;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
+  padding: 2rem;
+  transition: background 0.3s ease;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.brand {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.dashboard-controls button {
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+}
+
+.toggle-dark {
+  background-color: #444;
+  color: white;
+}
+
+.logout-button {
+  background-color: crimson;
+  color: white;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.dashboard-card {
+  text-align: center;
+  padding: 1rem;
+  background: #f2f2f2;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+body.dark-mode .dashboard-card {
+  background: #1e1e1e;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  background: #e0e0e0;
+}
+
+body.dark-mode .dashboard-card:hover {
+  background: #2e2e2e;
+}
+
+.card-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0.5rem;
+}
