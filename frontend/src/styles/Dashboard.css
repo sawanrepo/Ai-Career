@@ -29,13 +29,6 @@ body.dark-mode {
   transition: background 0.3s ease;
 }
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
 .brand {
   color: #007bff;
   font-weight: bold;
@@ -93,4 +86,23 @@ body.dark-mode .dashboard-card:hover {
   width: 60px;
   height: 60px;
   margin-bottom: 0.5rem;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1; 
+  pointer-events: none;
+  opacity: 0.08; 
+  transition: opacity 0.3s ease-in-out;
+}
+body.dark-mode::before {
+  background: url("../assets/logo.webp") no-repeat center center;
+  background-size: cover;
+  opacity: 0.1;
+  filter: brightness(1.1);
 }

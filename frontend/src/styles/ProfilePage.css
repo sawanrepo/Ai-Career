@@ -64,3 +64,21 @@
   .back-btn:hover {
     background-color: #0056b3;
   }
+
+  body.dark-mode .profile-card {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+  }
+  
+  body.dark-mode .profile-card input {
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+    border: 1px solid #555;
+  }
+  
+  body.dark-mode .profile-button,
+  body.dark-mode .profile-cancel-button,
+  body.dark-mode .back-btn {
+    background-color: #333;
+    color: white;
+  }  

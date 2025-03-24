@@ -170,3 +170,71 @@
     display: flex;
     gap: 10px;
   }  
+
+/* 🌙 Dark Mode Enhancements */
+body.dark-mode .chat-container {
+  background-color: #1a1a1a;
+  border-color: #2c2c2c;
+  color: #f1f1f1;
+}
+
+body.dark-mode .chat-box {
+  background-color: #121212;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.03);
+}
+
+body.dark-mode .chat-header h2 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .bubble {
+  background-color: #2c2c2c;
+  color: #f1f1f1;
+}
+
+body.dark-mode .message-row.user .bubble {
+  background-color: #335533;
+}
+
+body.dark-mode .message-content {
+  color: #ddd;
+}
+
+body.dark-mode .message-input {
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+  color: #f1f1f1;
+}
+
+body.dark-mode .send-button {
+  background-color: #007bff;
+  color: white;
+}
+
+body.dark-mode .send-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+body.dark-mode .reset-btn {
+  background-color: #c62828;
+}
+
+body.dark-mode .reset-btn:hover {
+  background-color: #aa1e1e;
+}
+
+body.dark-mode .back-btn {
+  background-color: #555;
+}
+
+body.dark-mode .back-btn:hover {
+  background-color: #444;
+}
+
+body.dark-mode .dot-flashing {
+  background-color: #007bff;
+}
+
+body.dark-mode .input-section {
+  border-top: 1px solid #333;
+}

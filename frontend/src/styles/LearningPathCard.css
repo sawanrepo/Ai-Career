@@ -1,17 +1,47 @@
 .card {
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background: #fdfdfd;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  }
-  
-  .step {
-    margin-bottom: 12px;
-  }
-  
-  .resources {
-    margin-left: 20px;
-    list-style-type: disc;
-  }  
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fdfdfd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  color: #222; /* Ensure readable text in light mode */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.step {
+  margin-bottom: 12px;
+  color: inherit;
+}
+
+.resources {
+  margin-left: 20px;
+  list-style-type: disc;
+  color: inherit;
+}
+
+.card a {
+  color: #007bff; /* Light mode link color */
+  text-decoration: none;
+}
+
+.card a:hover {
+  text-decoration: underline;
+}
+
+/* 🌙 Dark Mode Overrides */
+body.dark-mode .card {
+  background-color: #1e1e1e;
+  color: #f0f0f0;
+  border: 1px solid #444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .card a {
+  color: #4ea8ff;
+}
+
+body.dark-mode .card .step,
+body.dark-mode .card .resources {
+  color: #e0e0e0;
+}
