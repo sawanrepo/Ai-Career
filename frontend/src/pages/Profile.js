@@ -10,20 +10,20 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem('token');
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('http://localhost:8000/profile/', {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get(`${API_URL}/profile/`, {
+          headers: { Authorization: `Bearer ${token}` }, 
         });
-
 
         const user = res.data;
         const userProfile = {
           name: user.username,
           email: user.email,
-          ...user.profile 
+          ...user.profile,
         };
 
         setProfile(userProfile);
@@ -36,13 +36,13 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [token]);
+  }, [token, API_URL]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === "skills" || name === "interests" ? value.split(',') : value
+      [name]: name === 'skills' || name === 'interests' ? value.split(',') : value,
     }));
   };
 
@@ -53,15 +53,15 @@ const ProfilePage = () => {
       skills: formData.skills,
       interests: formData.interests,
       education: formData.education,
-      goals: formData.goals
+      goals: formData.goals,
     };
 
     try {
-      await axios.put('http://localhost:8000/profile/', payload, {
+      await axios.put(`${API_URL}/profile/`, payload, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`, 
+          'Content-Type': 'application/json',
+        },
       });
       setProfile({ ...profile, ...payload });
       setEditing(false);
