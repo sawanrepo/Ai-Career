@@ -1,7 +1,7 @@
 import axios from "../utils/axiosInstance";
 
 export const createLearningPath = async (career_path) => {
-  return await axios.post("/learning-path/", { career_path });
+  return await axios.post("/learning-path", { career_path });
 };
 
 export const getActivePaths = async () => {

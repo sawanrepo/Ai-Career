@@ -11,12 +11,13 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const togglePassword = () => setShowPassword((prev) => !prev);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const body = new URLSearchParams();
@@ -31,6 +32,8 @@ const Login = () => {
       navigate("/dashboard");
     } catch (err) {
       setError("Invalid email or password");
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +72,10 @@ const Login = () => {
 
           {error && <p className="error-text">{error}</p>}
 
-          <button type="submit">Login</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging you in..." : "Login"}
+          </button>
+
         </form>
 
         <p className="register-link">

@@ -23,6 +23,7 @@ const Register = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const togglePassword = () => setShowPassword((prev) => !prev);
 
   // Debounced Email Checker
@@ -102,6 +103,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    setIsRegistering(true);
 
     try {
       // 1. Register
@@ -132,6 +134,8 @@ const Register = () => {
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.detail || "Registration/Login failed");
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -196,7 +200,9 @@ const Register = () => {
           <p className="error">{errors.confirmPassword}</p>
         )}
 
-        <button type="submit">Register</button>
+        <button type="submit" disabled={isRegistering}>
+          {isRegistering ? "Registering..." : "Register"}
+        </button>
       </form>
 
       <p style={{ marginTop: "10px" }}>
