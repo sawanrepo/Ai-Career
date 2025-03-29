@@ -6,7 +6,7 @@ import "../styles/Dashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("User");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   const token = localStorage.getItem("token");
   const API_BASE = process.env.REACT_APP_API_URL;
@@ -28,6 +28,14 @@ const Dashboard = () => {
       fetchUser();
     }
   }, [token, API_BASE]);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }, [darkMode]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
