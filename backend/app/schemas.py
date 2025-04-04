@@ -94,4 +94,4 @@ class AryaChatResponse(BaseModel):
     timestamp: datetime
 
 class AryaChatHistoryResponse(BaseModel):
-    history: List[DrishtiChatResponse]
+    history: List[AryaChatResponse]
